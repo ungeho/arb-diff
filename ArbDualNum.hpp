@@ -732,9 +732,19 @@ class Matrix
             mat_0_1 = arb_mat_entry(mat, 0, 1);
             arb_one(mat_0_1);
         }
+        // εの係数を取得、微分値f'(x)
+        arb_ptr Get_DN()
+        {
+            return arb_mat_entry(this->mat, 0,1);
+        }
+        //f(x)を取得
+        arb_ptr Get_RN()
+        {
+            return arb_mat_entry(this->mat, 0, 0);
+        }
 
         // 行列の表示
-        void show()
+        void show_mat()
         {
             arb_mat_printd(mat, digit);
         }
@@ -742,56 +752,56 @@ class Matrix
 
 Matrix pow(Matrix obj,ulong n)
 {
-        Matrix res;
-        res = obj.pow(n);
-        return res;
+    Matrix res;
+    res = obj.pow(n);
+    return res;
 }
 
 Matrix exp(Matrix obj)
 {
-        Matrix res;
-        res = obj.exp();
-        return res;
+    Matrix res;
+    res = obj.exp();
+    return res;
 }
 
 Matrix sin(Matrix obj)
 {
-        Matrix res;
-        res = obj.sin();
-        return res;
+    Matrix res;
+    res = obj.sin();
+    return res;
 }
 
 Matrix cos(Matrix obj)
 {
-        Matrix res;
-        res = obj.cos();
-        return res;
+    Matrix res;
+    res = obj.cos();
+    return res;
 }
 
 Matrix tan(Matrix obj)
 {
-        Matrix res;
-        res = obj.tan();
-        return res;
+    Matrix res;
+    res = obj.tan();
+    return res;
 }
 
 Matrix log(Matrix obj)
 {
-        Matrix res;
-        res = obj.log();
-        return res;
+    Matrix res;
+    res = obj.log();
+    return res;
 }
 
 Matrix sqrt(Matrix obj)
 {
-        Matrix res;
-        res = obj.sqrt();
-        return res;
+    Matrix res;
+    res = obj.sqrt();
+    return res;
 }
 
 Matrix DualNumber(void)
 {
-        Matrix res;
-        res.DualNumber();
-        return res;
+    Matrix res;
+    res.DualNumber();
+    return res;
 }
