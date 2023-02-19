@@ -1,14 +1,14 @@
 #include "arb.h"
 #include "arb_mat.h"
 
-// 行,列
+// 行,列(1階微分のみなので変更なし、高階微分に対応する場合は拡張する必要がある)
 slong r=2,c=2;
-// 精度
+// 精度(bit):任意に変更可能 (単精度24bit,倍精度53bit,四倍精度113bit,八倍精度237bit)
 slong prec=53;
-// 表示桁数
+// 10進の表示桁数:任意に変更可能 (単精度6~9桁,倍精度15~17桁,四倍精度33~36桁,八倍精度71~73桁)
 slong digit=17;
 
-
+// 階乗
 slong factrial(slong n) {
     if (n > 0)
     {
@@ -25,7 +25,6 @@ class Matrix
 {
     arb_mat_t mat;
     public:
-        //名前忘れた
         ~Matrix(void){};
 
         // 定義したとき(代入なし)
@@ -110,7 +109,6 @@ class Matrix
         // スカラー(整数 slong)
         // スカラー(実数 arb_t)
         // スカラー(実数 char*)
-        // TODO:arb_tとchar*のみ両辺arb_tと両辺char*も実装しておきたい。
 
         // 掛け算
         // 行列*行列
