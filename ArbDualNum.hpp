@@ -57,7 +57,7 @@ class Matrix
             // 行列*スカラー(signed long)
             arb_mat_scalar_mul_si(this->mat,tmp.mat,obj,prec);
         }
-        // 定義したときの代入(実数)
+        // 定義したときの代入(arb_t)
         Matrix(const arb_t obj)
         {
             Matrix tmp;
@@ -68,6 +68,24 @@ class Matrix
             // 行列*スカラー(signed long)
             arb_mat_scalar_mul_arb(this->mat, tmp.mat, obj, prec);
         }
+        // 定義したときの代入(char*)
+        Matrix(const char* obj)
+        {
+            Matrix tmp;
+            arb_t arb_obj;
+            arb_init(arb_obj);
+            // 行列初期化
+            arb_mat_init(this->mat, r, c);
+            // 単位行列
+            arb_mat_one(tmp.mat);
+            if (arb_set_str(arb_obj, obj, prec))
+            {
+                printf("定義時の代入失敗\n");
+            }
+            arb_mat_scalar_mul_arb(this->mat, tmp.mat, arb_obj, prec);
+            arb_clear(arb_obj);
+        }
+
 
         // +x
         inline const Matrix operator+(void) const
@@ -91,6 +109,8 @@ class Matrix
         // 行列
         // スカラー(整数 slong)
         // スカラー(実数 arb_t)
+        // スカラー(実数 char*)
+        // TODO:arb_tとchar*のみ両辺arb_tと両辺char*も実装しておきたい。
 
         // 掛け算
         // 行列*行列
@@ -140,6 +160,34 @@ class Matrix
         {
             Matrix res;
             arb_mat_scalar_mul_arb(res.mat, rhs.mat, lhs, prec);
+            return res;
+        }
+        // 行列*実数(char*)
+        friend const Matrix operator*(const Matrix lhs, const char* rhs)
+        {
+            Matrix res;
+            arb_t arb_rhs;
+            arb_init(arb_rhs);
+            if (arb_set_str(arb_rhs, rhs, prec))
+            {
+                printf("*演算時の代入失敗( lhs(Matrix) * rhs(char*) )\n");
+            }
+            arb_mat_scalar_mul_arb(res.mat, lhs.mat, arb_rhs, prec);
+            arb_clear(arb_rhs);
+            return res;
+        }
+        // 実数（char*）*行列
+        friend const Matrix operator*(const char* lhs, const Matrix rhs)
+        {
+            Matrix res;
+            arb_t arb_lhs;
+            arb_init(arb_lhs);
+            if (arb_set_str(arb_lhs, lhs, prec))
+            {
+                printf("*演算時の代入失敗( lhs(char*) * rhs(Matrix) )\n");
+            }
+            arb_mat_scalar_mul_arb(res.mat, rhs.mat, arb_lhs, prec);
+            arb_clear(arb_lhs);
             return res;
         }
 
@@ -205,6 +253,38 @@ class Matrix
             arb_mat_add(res.mat, res.mat, rhs.mat, prec);
             return res;
         }
+        // 行列+実数(char*)
+        friend const Matrix operator+(const Matrix lhs, const char* rhs)
+        {
+            Matrix res;
+            arb_t arb_rhs;
+            arb_init(arb_rhs);
+            if (arb_set_str(arb_rhs, rhs, prec))
+            {
+                printf("演算時の代入失敗( lhs(Matrix) + rhs(char*) )\n");
+            }
+            arb_mat_one(res.mat);
+            arb_mat_scalar_mul_arb(res.mat, res.mat, arb_rhs, prec);
+            arb_mat_add(res.mat, lhs.mat, res.mat, prec);
+            arb_clear(arb_rhs);
+            return res;
+        }
+        // 実数(char*)+行列
+        friend const Matrix operator+(const char* lhs, const Matrix rhs)
+        {
+            Matrix res;
+            arb_t arb_lhs;
+            arb_init(arb_lhs);
+            if (arb_set_str(arb_lhs, lhs, prec))
+            {
+                printf("演算時の代入失敗( lhs(char*) + rhs(Matrix) )\n");
+            }
+            arb_mat_one(res.mat);
+            arb_mat_scalar_mul_arb(res.mat, res.mat, arb_lhs, prec);
+            arb_mat_add(res.mat, res.mat, rhs.mat, prec);
+            arb_clear(arb_lhs);
+            return res;
+        }
 
         // 引き算
         // 行列-行列
@@ -266,6 +346,38 @@ class Matrix
             arb_mat_one(res.mat);
             arb_mat_scalar_mul_arb(res.mat, res.mat, lhs, prec);
             arb_mat_sub(res.mat, res.mat, rhs.mat, prec);
+            return res;
+        }
+        // 行列-実数(char*)
+        friend const Matrix operator-(const Matrix lhs, const char* rhs)
+        {
+            Matrix res;
+            arb_t arb_rhs;
+            arb_init(arb_rhs);
+            if (arb_set_str(arb_rhs, rhs, prec))
+            {
+                printf("演算時の代入失敗( lhs(Matrix) - rhs(char*) )\n");
+            }
+            arb_mat_one(res.mat);
+            arb_mat_scalar_mul_arb(res.mat, res.mat, arb_rhs, prec);
+            arb_mat_sub(res.mat, lhs.mat, res.mat, prec);
+            arb_clear(arb_rhs);
+            return res;
+        }
+        // 実数(char*)-行列
+        friend const Matrix operator-(const char* lhs, const Matrix rhs)
+        {
+            Matrix res;
+            arb_t arb_lhs;
+            arb_init(arb_lhs);
+            if (arb_set_str(arb_lhs, lhs, prec))
+            {
+                printf("演算時の代入失敗( lhs(char*) - rhs(Matrix) )\n");
+            }
+            arb_mat_one(res.mat);
+            arb_mat_scalar_mul_arb(res.mat, res.mat, arb_lhs, prec);
+            arb_mat_sub(res.mat, res.mat, rhs.mat, prec);
+            arb_clear(arb_lhs);
             return res;
         }
 
@@ -362,6 +474,46 @@ class Matrix
             }
             return res;
         }
+        // 行列/実数(char*)
+        friend const Matrix operator/(const Matrix lhs, const char* rhs)
+        {
+            Matrix res;
+            arb_t tmp;
+            arb_t arb_rhs;
+            arb_init(arb_rhs);
+            if (arb_set_str(arb_rhs, rhs, prec))
+            {
+                printf("演算時の代入失敗( lhs(Matrix) / rhs(char*) )\n");
+            }
+            // 1/rhs
+            arb_inv(arb_rhs, arb_rhs, prec);
+            // lhs/rhs
+            arb_mat_scalar_mul_arb(res.mat, lhs.mat, arb_rhs, prec);
+            // clear
+            arb_clear(arb_rhs);
+            return res;
+        }
+        // 実数（char*）/行列
+        friend const Matrix operator/(const char* lhs, const Matrix rhs)
+        {
+            Matrix res;
+            arb_t arb_lhs;
+            arb_init(arb_lhs);
+            if (arb_set_str(arb_lhs, lhs, prec))
+            {
+                printf("演算時の代入失敗( lhs(*char) / rhs(Matrix) )\n");
+            }
+            if (arb_mat_inv(res.mat, rhs.mat, prec))
+            {
+                arb_mat_scalar_mul_arb(res.mat, rhs.mat, arb_lhs, prec);
+            }
+            else
+            {
+                printf("厳密な逆行列を求めることが出来ません。\n");
+            }
+            arb_clear(arb_lhs);
+            return res;
+        }
 
         // 代入
         // 行列=行列
@@ -384,11 +536,25 @@ class Matrix
             arb_mat_scalar_mul_si(this->mat,this->mat,obj,prec);
             return *this;
         }
-        // 行列=実数
+        // 行列=実数(arb_t)
         Matrix operator=(const arb_t obj)
         {
             arb_mat_one(this->mat);
             arb_mat_scalar_mul_arb(this->mat, this->mat, obj, prec);
+            return *this;
+        }
+        // 行列=実数(char*)
+        Matrix operator=(const char* obj)
+        {
+            arb_t arb_obj;
+            arb_init(arb_obj);
+            if (arb_set_str(arb_obj, obj, prec))
+            {
+                printf("定義時の代入失敗\n");
+            }
+            arb_mat_one(this->mat);
+            arb_mat_scalar_mul_arb(this->mat, this->mat, arb_obj, prec);
+            arb_clear(arb_obj);
             return *this;
         }
 
@@ -413,6 +579,11 @@ class Matrix
             *this = *this + obj;
             return *this;
         }
+        Matrix operator+=(const char* obj)
+        {
+            *this = *this + obj;
+            return *this;
+        }
         Matrix operator-=(const Matrix obj)
         {
             *this = *this - obj;
@@ -429,6 +600,11 @@ class Matrix
             return *this;
         }
         Matrix operator-=(const arb_t obj)
+        {
+            *this = *this - obj;
+            return *this;
+        }
+        Matrix operator-=(const char* obj)
         {
             *this = *this - obj;
             return *this;
@@ -453,6 +629,11 @@ class Matrix
             *this = *this * obj;
             return *this;
         }
+        Matrix operator*=(const char* obj)
+        {
+            *this = *this * obj;
+            return *this;
+        }
         Matrix operator/=(const Matrix obj)
         {
             *this = *this / obj;
@@ -469,6 +650,11 @@ class Matrix
             return *this;
         }
         Matrix operator/=(const arb_t obj)
+        {
+            *this = *this / obj;
+            return *this;
+        }
+        Matrix operator/=(const char* obj)
         {
             *this = *this / obj;
             return *this;
@@ -804,4 +990,18 @@ Matrix DualNumber(void)
     Matrix res;
     res.DualNumber();
     return res;
+}
+
+void show_mat(Matrix obj)
+{
+    obj.show_mat();
+}
+
+void show_arb(arb_ptr obj)
+{
+    arb_t fx;
+    arb_init(fx);
+    arb_set(fx,obj);
+    arb_printd(fx, digit); flint_printf("\n");
+    arb_clear(fx);
 }
