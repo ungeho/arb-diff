@@ -1,5 +1,7 @@
 #include "ArbDualNum.hpp"
 
+
+//f(x)
 template <typename T>
 T func(T x)
 {
@@ -13,7 +15,7 @@ int main()
     // fx = f(x + ε)
     fx = func(x + DualNumber());
 
-    //xを出力 
+    //xを出力
     printf("x:\n");
     show_arb(x.Get_RN());
 
